@@ -13,6 +13,7 @@ class AuthMethods {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance.collection('users');
 
+  Stream<User?> get authChanges => _auth.authStateChanges();
   Future<Map<String, dynamic>?> getCurrentUser(String? uid) async {
     if (uid != null) {
       final snap = await _firestore.doc(uid).get();
@@ -21,6 +22,11 @@ class AuthMethods {
       return snap.data();
     }
     return null;
+  }
+
+  setToProvider(BuildContext context) async {
+    Provider.of<UserProvide>(context, listen: false).setUser(
+        model.User.fromMap(await getCurrentUser(_auth.currentUser!.uid) ?? {}));
   }
 
   Future<bool> signupUser(String email, String password, String username,
@@ -61,9 +67,10 @@ class AuthMethods {
           email: email, password: password);
       if (credential.user != null) {
         if (_auth.currentUser != null) {
-          Provider.of<UserProvide>(context, listen: false).setUser(
-              model.User.fromMap(
-                  await getCurrentUser(_auth.currentUser!.uid) ?? {}));
+          // Provider.of<UserProvide>(context, listen: false).setUser(
+          //     model.User.fromMap(
+          //         await getCurrentUser(_auth.currentUser!.uid) ?? {}));
+          setToProvider(context);
 
           Message.toatsMessage('Logged in');
           res = true;

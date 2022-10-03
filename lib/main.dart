@@ -6,6 +6,7 @@ import 'package:twitch_clone/pages/auth_screens/signup_screen.dart';
 import 'package:twitch_clone/pages/home_screen.dart';
 import 'package:twitch_clone/pages/onboarding_page.dart';
 import 'package:twitch_clone/provider/user_provider.dart';
+import 'package:twitch_clone/resources/firebase_methods.dart';
 import 'package:twitch_clone/utilis/colors.dart';
 
 Future<void> main() async {
@@ -35,7 +36,21 @@ class MyApp extends StatelessWidget {
                   fontSize: 18,
                   fontWeight: FontWeight.bold)),
           iconTheme: const IconThemeData(color: primaryColor)),
-      home: const OnboardingScreen(),
+      home: StreamBuilder(
+        stream: AuthMethods().authChanges,
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          }
+          if (snapshot.hasData) {
+            AuthMethods().setToProvider(context);
+            return const HomeScreen();
+          }
+          return const OnboardingScreen();
+        },
+      ),
       routes: {
         OnboardingScreen.routeName: (context) => const OnboardingScreen(),
         SignUpScreen.routeName: (context) => const SignUpScreen(),
