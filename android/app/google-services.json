@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "555861869920",
+    "project_id": "twich-clone-7479d",
+    "storage_bucket": "twich-clone-7479d.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:555861869920:android:4df894c2c84ac736c68a05",
+        "android_client_info": {
+          "package_name": "com.example.twitch_clone"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "555861869920-cdr0bn4k43go61imt6fq2bf0kegu4mo8.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDaLwxt9wOKGLDRkQ4uko0yx4PI_8Hd5_Q"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "555861869920-cdr0bn4k43go61imt6fq2bf0kegu4mo8.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
