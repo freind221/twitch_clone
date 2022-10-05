@@ -2,9 +2,10 @@ import 'dart:typed_data';
 
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
+import 'package:twitch_clone/pages/broadcast_screen.dart';
+
 import 'package:twitch_clone/resources/firestore_methods.dart';
-import 'package:twitch_clone/pages/onboarding_page.dart';
+
 import 'package:twitch_clone/utilis/colors.dart';
 import 'package:twitch_clone/utilis/toast_message.dart';
 import 'package:twitch_clone/widgets/custom_button.dart';
@@ -19,12 +20,34 @@ class GoLiveScreen extends StatefulWidget {
 
 class _GoLiveScreenState extends State<GoLiveScreen> {
   final TextEditingController _titleController = TextEditingController();
+  final FireStoreMethods storeMethods = FireStoreMethods();
   Uint8List? image;
+  bool isLoading = false;
 
   @override
   void dispose() {
     _titleController.dispose();
+
     super.dispose();
+  }
+
+  liveStreamMeeting() async {
+    Message.toatsMessage("Creating Meeting For you");
+    bool res = await storeMethods.uploadinLiveStream(
+        _titleController.text, image, context);
+
+    if (res) {
+      setState(() {
+        isLoading = false;
+      });
+
+      // ignore: use_build_context_synchronously
+      Navigator.pushNamed(context, BroadCastingScreen.routeName);
+    } else {
+      setState(() {
+        isLoading = false;
+      });
+    }
   }
 
   @override
@@ -40,7 +63,11 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 children: [
                   GestureDetector(
                     onTap: () async {
-                      Uint8List? file = await Message.pickImage();
+                      Uint8List? file = await Message.pickImage()
+                          .onError((error, stackTrace) {
+                        Message.toatsMessage(error.toString());
+                      });
+
                       if (file != null) {
                         setState(() {
                           image = file;
@@ -118,10 +145,13 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                   bottom: 10,
                 ),
                 child: CustomButton(
+                  loading: isLoading,
                   text: 'Go Live!',
                   onTap: () {
-                    FireStoreMethods().uploadinLiveStream(
-                        _titleController.text, image, context);
+                    setState(() {
+                      isLoading = true;
+                    });
+                    liveStreamMeeting();
                   },
                 ),
               )
