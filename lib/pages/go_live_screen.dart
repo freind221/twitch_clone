@@ -1,6 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/widgets.dart';
+import 'package:twitch_clone/resources/firestore_methods.dart';
+import 'package:twitch_clone/pages/onboarding_page.dart';
 import 'package:twitch_clone/utilis/colors.dart';
+import 'package:twitch_clone/utilis/toast_message.dart';
 import 'package:twitch_clone/widgets/custom_button.dart';
 import 'package:twitch_clone/widgets/custom_textfield.dart';
 
@@ -13,6 +19,7 @@ class GoLiveScreen extends StatefulWidget {
 
 class _GoLiveScreenState extends State<GoLiveScreen> {
   final TextEditingController _titleController = TextEditingController();
+  Uint8List? image;
 
   @override
   void dispose() {
@@ -32,45 +39,57 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
               Column(
                 children: [
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      Uint8List? file = await Message.pickImage();
+                      if (file != null) {
+                        setState(() {
+                          image = file;
+                        });
+                      }
+                    },
                     child: Padding(
                       padding: const EdgeInsets.symmetric(
                         horizontal: 22.0,
                         vertical: 20.0,
                       ),
-                      child: DottedBorder(
-                        borderType: BorderType.RRect,
-                        radius: const Radius.circular(10),
-                        dashPattern: const [10, 4],
-                        strokeCap: StrokeCap.round,
-                        color: buttonColor,
-                        child: Container(
-                          width: double.infinity,
-                          height: 150,
-                          decoration: BoxDecoration(
-                            color: buttonColor.withOpacity(.05),
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              const Icon(
-                                Icons.folder_open,
-                                color: buttonColor,
-                                size: 40,
-                              ),
-                              const SizedBox(height: 15),
-                              Text(
-                                'Select your thumbnail',
-                                style: TextStyle(
-                                  fontSize: 15,
-                                  color: Colors.grey.shade400,
+                      child: image != null
+                          ? SizedBox(
+                              height: 300,
+                              child: Image.memory(image!),
+                            )
+                          : DottedBorder(
+                              borderType: BorderType.RRect,
+                              radius: const Radius.circular(10),
+                              dashPattern: const [10, 4],
+                              strokeCap: StrokeCap.round,
+                              color: buttonColor,
+                              child: Container(
+                                width: double.infinity,
+                                height: 150,
+                                decoration: BoxDecoration(
+                                  color: buttonColor.withOpacity(.05),
+                                  borderRadius: BorderRadius.circular(10),
                                 ),
-                              )
-                            ],
-                          ),
-                        ),
-                      ),
+                                child: Column(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    const Icon(
+                                      Icons.folder_open,
+                                      color: buttonColor,
+                                      size: 40,
+                                    ),
+                                    const SizedBox(height: 15),
+                                    Text(
+                                      'Select your thumbnail',
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        color: Colors.grey.shade400,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
+                            ),
                     ),
                   ),
                   const SizedBox(height: 10),
@@ -100,7 +119,10 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
                 ),
                 child: CustomButton(
                   text: 'Go Live!',
-                  onTap: () {},
+                  onTap: () {
+                    FireStoreMethods().uploadinLiveStream(
+                        _titleController.text, image, context);
+                  },
                 ),
               )
             ],
