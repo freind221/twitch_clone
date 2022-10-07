@@ -13,13 +13,17 @@ class Message {
   static Future pickImage() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles();
 
-    if (result != null) {
-      if (kIsWeb) {
-        Uint8List fileBytes = result.files.single.bytes!;
-        return fileBytes;
+    try {
+      if (result != null) {
+        if (kIsWeb) {
+          Uint8List fileBytes = result.files.single.bytes!;
+          return fileBytes;
+        }
+        Uint8List file = await File(result.files.single.path!).readAsBytes();
+        return file;
       }
-      Uint8List file = await File(result.files.single.path!).readAsBytes();
-      return file;
+    } catch (e) {
+      Message.toatsMessage(e.toString());
     }
   }
 }

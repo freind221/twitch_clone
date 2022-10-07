@@ -19,7 +19,9 @@ class CustomButton extends StatelessWidget {
       onPressed: onTap,
       child: loading
           ? const Center(
-              child: CircularProgressIndicator(),
+              child: CircularProgressIndicator(
+                color: Colors.white,
+              ),
             )
           : Text(text),
     );

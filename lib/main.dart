@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:twitch_clone/pages/auth_screens/login_screen.dart';
 import 'package:twitch_clone/pages/auth_screens/signup_screen.dart';
+import 'package:twitch_clone/pages/broadcast_screen.dart';
 import 'package:twitch_clone/pages/home_screen.dart';
 import 'package:twitch_clone/pages/onboarding_page.dart';
 import 'package:twitch_clone/provider/user_provider.dart';
@@ -56,6 +57,7 @@ class MyApp extends StatelessWidget {
         SignUpScreen.routeName: (context) => const SignUpScreen(),
         LoginScreen.routeName: (context) => const LoginScreen(),
         HomeScreen.routeName: (context) => const HomeScreen(),
+        BroadCastingScreen.routeName: (context) => const BroadCastingScreen()
       },
     );
   }

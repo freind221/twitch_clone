@@ -38,6 +38,8 @@ dependencies:
     sdk: flutter
   fluttertoast: ^8.0.9
   provider: ^6.0.3
+  agora_rtc_engine: ^6.0.0
+  permission_handler: ^10.1.0
 
 dev_dependencies:
   flutter_lints: ^2.0.0
