@@ -33,16 +33,20 @@ class _GoLiveScreenState extends State<GoLiveScreen> {
 
   liveStreamMeeting() async {
     Message.toatsMessage("Creating Meeting For you");
-    bool res = await storeMethods.uploadinLiveStream(
+    String res = await storeMethods.uploadinLiveStream(
         _titleController.text, image, context);
 
-    if (res) {
+    if (res.isNotEmpty) {
       setState(() {
         isLoading = false;
       });
 
       // ignore: use_build_context_synchronously
-      Navigator.pushNamed(context, BroadCastingScreen.routeName);
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: ((context) => BroadCastingScreen(
+                isBroadcaster: true,
+                channelId: res,
+              ))));
     } else {
       setState(() {
         isLoading = false;

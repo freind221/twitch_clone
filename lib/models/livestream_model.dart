@@ -3,6 +3,7 @@ class LiveStream {
   final String image;
   final String uid;
   final String username;
+  // ignore: prefer_typing_uninitialized_variables
   final startedAt;
   final int viewers;
   final String channelId;

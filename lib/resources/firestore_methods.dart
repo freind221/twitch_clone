@@ -15,9 +15,9 @@ import 'package:twitch_clone/utilis/toast_message.dart';
 class FireStoreMethods {
   final StorageMethods storageMethods = StorageMethods();
   final _firestore = FirebaseFirestore.instance;
-  Future<bool> uploadinLiveStream(
+  Future<String> uploadinLiveStream(
       String title, Uint8List? file, BuildContext context) async {
-    bool res = false;
+    String channelID = '';
     final providerUser = Provider.of<UserProvide>(context, listen: false);
     try {
       if (title.isNotEmpty && file != null) {
@@ -28,9 +28,10 @@ class FireStoreMethods {
             .exists)) {
           var url = await storageMethods.uploadImageToSource(
               'LiveStreams', file, providerUser.user.uid);
-          res = true;
+
           final String channelId =
               "${providerUser.user.uid}${providerUser.user.username}";
+          channelID = channelId;
           LiveStream liveStream = LiveStream(
               title: title,
               image: url,
@@ -43,11 +44,10 @@ class FireStoreMethods {
               .collection('liveStreamData')
               .doc(channelId)
               .set(liveStream.toMap())
-              .then((value) {
-            res = true;
-          }).onError((error, stackTrace) {
+              .then((value) {})
+              .onError((error, stackTrace) {
             Message.toatsMessage(error.toString());
-            res = false;
+            channelID = '';
           });
         } else {
           Message.toatsMessage("You cannot start two meetings at a time");
@@ -58,6 +58,51 @@ class FireStoreMethods {
     } catch (e) {
       Message.toatsMessage(e.toString());
     }
-    return res;
+    return channelID;
+  }
+
+  leaveChannel(String channelId) async {
+    try {
+      QuerySnapshot snapshot = await _firestore
+          .collection('liveStreamData')
+          .doc(channelId)
+          .collection('comments')
+          .get();
+
+      for (var i = 0; i < snapshot.docs.length; i++) {
+        await _firestore
+            .collection('liveStreamData')
+            .doc(channelId)
+            .collection('comments')
+            .doc((snapshot.docs[i].data() as dynamic)['commentId'])
+            .delete()
+            .then((value) {})
+            .onError((error, stackTrace) {
+          Message.toatsMessage(error.toString());
+        });
+      }
+
+      await _firestore
+          .collection('liveStreamData')
+          .doc(channelId)
+          .delete()
+          .onError((error, stackTrace) {
+        Message.toatsMessage(error.toString());
+      });
+    } catch (e) {
+      Message.toatsMessage(e.toString());
+    }
+  }
+
+  updateViewCount(String channelId, bool isIncreasing) async {
+    try {
+      await _firestore.collection('liveStreamData').doc(channelId).update({
+        'viewers': FieldValue.increment(isIncreasing ? 1 : -1)
+      }).onError((error, stackTrace) {
+        Message.toatsMessage(error.toString());
+      });
+    } catch (e) {
+      Message.toatsMessage(e.toString());
+    }
   }
 }

@@ -11,7 +11,7 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
     <uses-permission android:name="android.permission.READ_PRIVILEGED_PHONE_STATE"
-    tools:ignore="ProtectedPermissions" />
+    />
    <application
         android:label="twitch_clone"
         android:name="${applicationName}"
